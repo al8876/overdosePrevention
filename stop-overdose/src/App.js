@@ -2,31 +2,68 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import { withScriptjs, withGoogleMap, GoogleMap, Marker } from "react-google-maps"
-import { compose, withProps } from "recompose"
+import { withScriptjs, withGoogleMap, GoogleMap, Marker, DirectionsRenderer } from "react-google-maps";
+import { compose, withProps, lifecycle } from "recompose";
+
 
 const onMarkerClick = () => {
   alert('hello')
 }
 
-const MyMapComponent = compose(
+// const MyMapComponent = compose(
+//   withProps({
+//     googleMapURL: "https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places",
+//     loadingElement: <div style={{ height: `100%` }} />,
+//     containerElement: <div style={{ height: `400px` }} />,
+//     mapElement: <div style={{ height: `100%` }} />,
+//   }),
+//   withScriptjs,
+//   withGoogleMap
+//   )((props) =>
+//   <GoogleMap
+//     defaultZoom={10}
+//     defaultCenter={{ lat: 49.2827, lng: -123.1207 }}
+//   >
+//     {props.isMarkerShown && <Marker position={{ lat: 49.2827, lng: -123.1207 }} onClick={this.onMarkerClick} />}
+//   </GoogleMap>
+// )
+
+const MapWithADirectionsRenderer = compose(
   withProps({
-    googleMapURL: "https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places",
+    googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyC4R6AN7SmujjPUIGKdyao2Kqitzr1kiRg&v=3.exp&libraries=geometry,drawing,places",
     loadingElement: <div style={{ height: `100%` }} />,
     containerElement: <div style={{ height: `400px` }} />,
     mapElement: <div style={{ height: `100%` }} />,
   }),
   withScriptjs,
-  withGoogleMap
-)((props) =>
-  <GoogleMap
-    defaultZoom={10}
-    defaultCenter={{ lat: 49.2827, lng: -123.1207 }}
-  >
-    {props.isMarkerShown && <Marker position={{ lat: 49.2827, lng: -123.1207 }} onClick={this.onMarkerClick} />}
-  </GoogleMap>
-)
+  withGoogleMap,
+  lifecycle({
+    componentDidMount() {
+      const DirectionsService = new google.maps.DirectionsService();
 
+      DirectionsService.route({
+        origin: new google.maps.LatLng(41.8507300, -87.6512600),
+        destination: new google.maps.LatLng(41.8525800, -87.6514100),
+        travelMode: google.maps.TravelMode.DRIVING,
+      }, (result, status) => {
+        if (status === google.maps.DirectionsStatus.OK) {
+          this.setState({
+            directions: result,
+          });
+        } else {
+          console.error(`error fetching directions ${result}`);
+        }
+      });
+    }
+  })
+)(props =>
+  <GoogleMap
+    defaultZoom={7}
+    defaultCenter={new google.maps.LatLng(41.8507300, -87.6512600)}
+  >
+    {props.directions && <DirectionsRenderer directions={props.directions} />}
+  </GoogleMap>
+);
 
 
 
@@ -42,6 +79,9 @@ class App extends Component {
         <p className="App-intro">
           First: call 911
         </p>
+        <button onclick="instructions()">
+          OVERDOSE INSTRUCTIONS CLICK HERE
+        </button>
         <p>
         Responding to an overdose
         Call 911 if you suspect an overdose, the sooner you call the better the chance of recovery. While you’re waiting for first responders to arrive, follow SAVE ME protocol.
@@ -71,8 +111,9 @@ class App extends Component {
         Turn onto the side.
         Place hand under head to support the head.
         Place the top leg slightly in front of the leg touching the ground, and place the knee to the ground to prevent the body from rolling into the stomach.
-        </p>
-        <MyMapComponent isMarkerShown />
+      </p>
+        {/* <MyMapComponent isMarkerShown /> */}
+        <MapWithADirectionsRenderer />
       </div>
 
 
