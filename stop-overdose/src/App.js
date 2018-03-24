@@ -32,8 +32,6 @@ const MyMapComponent = compose(
 
 
 class App extends Component {
-
-  
   render() {
     return (
       <div className="App">
@@ -78,8 +76,6 @@ class App extends Component {
       </p>
         <MyMapComponent isMarkerShown />
       </div>
-
-
     );
   }
 }
