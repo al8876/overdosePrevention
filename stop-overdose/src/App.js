@@ -5,30 +5,7 @@ import './App.css';
 import { withScriptjs, withGoogleMap, GoogleMap, Marker, DirectionsRenderer } from "react-google-maps";
 import { compose, withProps, lifecycle } from "recompose";
 
-
-const onMarkerClick = () => {
-  alert('hello')
-}
-
-const MyMapComponent = compose(
-  withProps({
-    googleMapURL: "https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places",
-    loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
-    mapElement: <div style={{ height: `100%` }} />,
-  }),
-  withScriptjs,
-  withGoogleMap
-  )((props) =>
-  <GoogleMap
-    defaultZoom={10}
-    defaultCenter={{ lat: 49.2827, lng: -123.1207 }}
-  >
-    {props.isMarkerShown && <Marker position={{ lat: 49.2827, lng: -123.1207 }} onClick={this.onMarkerClick} />}
-  </GoogleMap>
-)
-
-
+import MyMapComponent from './components/GoogleMaps.js';
 
 
 class App extends Component {
